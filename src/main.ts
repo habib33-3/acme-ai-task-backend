@@ -9,7 +9,9 @@ async function bootstrap() {
 
   const httpAdapterHost = app.get(HttpAdapterHost);
 
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+  });
   app.setGlobalPrefix("api/v1");
   app.useGlobalPipes(
     new ValidationPipe({

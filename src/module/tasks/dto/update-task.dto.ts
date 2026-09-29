@@ -18,7 +18,7 @@ export class UpdateTaskDto {
 
   @IsOptional()
   @IsString()
-  @MinLength(10)
+  @MinLength(5)
   @MaxLength(500)
   @Transform(({ value }) => value.trim())
   description?: string;
