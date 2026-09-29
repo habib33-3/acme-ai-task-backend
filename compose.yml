@@ -1,0 +1,45 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: acme-ai-job-task-backend
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/acme_ai_job_task
+      PORT: 5000
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - acme-ai-job-task-network
+
+  db:
+    image: postgres:17-alpine
+    container_name: acme-ai-job-task-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: acme_ai_job_task
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d acme_ai_job_task"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - acme-ai-job-task-network
+
+volumes:
+  db-data:
+    name: acme-ai-job-task-db-data
+
+networks:
+  acme-ai-job-task-network:
+    name: acme-ai-job-task-network
+    driver: bridge
